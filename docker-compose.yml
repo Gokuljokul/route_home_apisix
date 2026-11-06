@@ -1,0 +1,19 @@
+services:
+  apisix:
+    image: compose-home-apisix:local
+    build:
+      context: ./apisix
+    restart: always
+    ports:
+      - "80:9080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - portal
+
+  portal:
+    build:
+      context: ./portal
+    restart: always
+    env_file:
+      - .env

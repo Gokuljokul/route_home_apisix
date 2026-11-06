@@ -1,0 +1,28 @@
+routes:
+  -
+    id: portal
+    uri: /*
+    priority: -1
+    upstream:
+      nodes:
+        "portal:3000": 1
+      type: roundrobin
+  -
+    id: ssh-proxy
+    uri: /ssh*
+    priority: 10
+    plugins:
+      forward-auth:
+        uri: http://portal:3000/auth
+        request_headers:
+          - cookie
+        status_on_error: 401
+      proxy-rewrite:
+        regex_uri:
+          - "^/ssh/?(.*)"
+          - "/$1"
+    upstream:
+      nodes:
+        "host.docker.internal:8080": 1
+      type: roundrobin
+#END
